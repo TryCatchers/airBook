@@ -1,0 +1,240 @@
+오전 10:37 2023-06-15
+
+
+		System.out.println();
+		System.out.println("┌─────────────[예매내역]───────────┐");
+		System.out.println("\t" + "권지현" + "님  \n\t예매번호 : " + "101번" + "\n\t"
+								+ "이코노미 ▶ " + "서울 - 제주"+ "\n\t"
+								+"2월 17일 " + "13:00" + " ~ " + "15:00");
+		System.out.println("└────────────────────────────────┘");
+///
+예매번호: 100(AirBook)
+권지현님(mVO--->AirBook)
+이코노미(airOptVO)   서울 - 제주(AirInfo)   
+2월 17일(AirInfo) 13:00 ~ 15:00(AirInfo)
+
+/////////////////////////////////////////////////
+------------------------------------------------
+SQL
+
+MEMBER (회원)
+	로그인 - SELECTONE()
+	SELECT MEMBER_ID, MEMBER_PW, MEMBER_NAME, STATUS_NUM FROM MEMBER WHERE MEMBER_ID = ?;
+
+	회원가입 - INSERT()
+	INSERT INTO MEMBER (MEMBER_ID, MEMBER_PW, MEMBER_NAME, STATUS_NUM) VALUES(?, ?, ?, 2);
+
+	회원정보변경 - UPDATE()
+	UPDATE MEMBER SET MEMBER_PW = ? WHERE MEMBER_ID = ?;
+
+	회원탈퇴 - DELETE()
+	DELETE FROM MEMBER WHERE  MEMBER_ID = ?;
+
+
+STATUS (회원등급)
+	초기데이터 삽입 - INSERT()
+	디비에서
+
+
+AIRINFO (항공정보)
+	항공권 목록 출력, 인기순 출력, 시간순 출력 - SELECTALL()
+	: 항공권 목록 출력 ---> 조인
+	SELECT AIRINFO_NUM, AIRINFO_AIRLINE, AIRINFO_ROUTE, AIRINFO_START, AIRINFO_RETURN, AIRINFO_PRICE, AIRINFO_DATE
+	FROM AIRINFO;
+	SQL
+
+MEMBER (회원)
+	로그인 - SELECTONE()
+	SELECT MEMBER_ID, MEMBER_PW, MEMBER_NAME, STATUS_NUM FROM MEMBER WHERE MEMBER_ID = ?;
+
+	회원가입 - INSERT()
+	INSERT INTO MEMBER (MEMBER_ID, MEMBER_PW, MEMBER_NAME, STATUS_NUM) VALUES(?, ?, ?, 2);
+
+	회원정보변경 - UPDATE()
+	UPDATE MEMBER SET MEMBER_PW = ? WHERE MEMBER_ID = ?;
+
+	회원탈퇴 - DELETE()
+	DELETE FROM MEMBER WHERE  MEMBER_ID = ?;
+
+STATUS (회원등급)
+	초기데이터 삽입 - INSERT()
+	디비에서
+
+AIRINFO (항공정보)
+	항공권 목록 출력, 인기순 출력, 시간순 출력 - SELECTALL()
+	: 항공권 목록 출력 ---> 조인
+	SELECT AIRINFO_NUM, AIRINFO_AIRLINE, AIRINFO_ROUTE, AIRINFO_START, AIRINFO_RETURN, AIRINFO_PRICE, AIRINFO_DATE
+	FROM AIRINFO;
+	
+
+	//***************미완
+	// 예매된 내역이 많은 순	
+	: 인기순 출력
+	SELECT AIRINFO_NUM, AIRINFO_AIRLINE, AIRINFO_ROUTE, AIRINFO_START, AIRINFO_RETURN, AIRINFO_PRICE, AIRINFO_DATE
+	FROM AIRINFO
+	
+	
+
+	// 시간이 빠른순 >> 일단 출발 빠른순 ---> 변경 가능
+	: 시간순 출력
+	SELECT AIRINFO_NUM, AIRINFO_AIRLINE, AIRINFO_ROUTE, AIRINFO_START, AIRINFO_RETURN, AIRINFO_PRICE, AIRINFO_DATE
+	FROM AIRINFO
+	ORDER BY AIRINFO_START ASC;
+
+
+	항공권 선택 - SELECTONE()
+	SELECT AIRINFO_NUM, AIRINFO_AIRLINE, AIRINFO_ROUTE, AIRINFO_START, AIRINFO_RETURN, AIRINFO_PRICE, AIRINFO_DATE
+	FROM AIRINFO
+	WHERE AIRINFO_NUM = ?;
+
+
+	항공권 잔여좌석, 시간, 가격 변경(관리자) - UPDATE()
+	: 시간 + 가격 변경
+	UPDATE AIRINFO SET AIRINFO_START = ?, AIRINFO_RETURN = ?, AIRINFO_PRICE = ? WHERE AIRINFO_NUM = ?;
+
+	: 시간 변경
+	UPDATE AIRINFO SET AIRINFO_START = ?, AIRINFO_RETURN = ? WHERE AIRINFO_NUM = ?;
+
+	: 가격 변경
+	UPDATE AIRINFO SET AIRINFO_PRICE = ? WHERE AIRINFO_NUM = ?;
+
+	// ????
+	: 좌석 변경
+	
+	항공권 삭제(관리자) - DELETE()
+	DELETE FROM AIRINFO WHERE  AIRINFO_NUM = ?;
+	
+//////// ???
+AIROPT (항공옵션)
+	선택한 항공권 옵션목록 - SELECTALL()	// ????
+	
+
+	- SELECTONE()
+	SELECT AIROPT_NUM, AIROPT_GRADE, AIROPT_PRICE FROM AIROPT WHERE AIROPT_NUM = ?;
+
+	초기데이터 삽입 - INSERT()
+	// 디비에서
+
+//***************미완
+/// AIRDET_NUM을 알아야 되서 조인해야함
+AIRDET (항공상세)
+	선택한 항공권 목록 - SELECTALL()
+	SELECT AIRDET_NUM, AIRINFO_NUM, AIROPT_NUM, AIRDET_CNT FROM AIRDET WHERE AIRDET_NUM = ?;
+
+	- SELECTONE()
+
+	크롤링할 때 같이 삽입 - INSERT()
+	// 디비에서
+
+	잔여 좌석 변경 - UPDATE()
+	UPDATE AIRDET SET AIRDET_CNT = 57 WHERE AIRDET_NUM = ?;
+
+
+	- DELETE()
+
+AIRBOOK (항공예매)
+	// 어떤 회원이 예매한 
+	예매한 항공권 목록 - SELECTALL()
+	SELECT AIRBOOK_NUM, MEMBER_ID, AIRDET_NUM, AIRBOOK_CNT, AIRBOOK_DATE FROM AIRBOOK WHERE MEMBER_ID = ?;
+
+	예매한 항공권 - SELECTONE()
+	SELECT AIRBOOK_NUM, MEMBER_ID, AIRDET_NUM, AIRBOOK_CNT, AIRBOOK_DATE FROM AIRBOOK WHERE AIRBOOK_NUM = ?;
+
+	//***************미완
+	항공권 예매 - INSERT()
+	예매처리하고 재고 깍아야 함
+	// 회원 아이디, 항공상세 번호 >>> 이거조인, 재고, 카드번호
+	INSERT INTO AIRBOOK (MEMBER_ID, AIRDET_NUM, AIRBOOK_CNT, AIRBOOK_CARD) VALUES ('user003', 4, 2, 5478541256480541);
+	
+
+	예약 변경 - UPDATE()
+	
+
+	예약 취소 - DELETE()
+	// 예매된 내역이 많은 순	
+	: 인기순 출력
+	SELECT AIRINFO_NUM, AIRINFO_AIRLINE, AIRINFO_ROUTE, AIRINFO_START, AIRINFO_RETURN, AIRINFO_PRICE, AIRINFO_DATE
+	FROM AIRINFO
+	
+	
+
+	// 시간이 빠른순 >> 일단 출발 빠른순 ---> 변경 가능
+	: 시간순 출력
+	SELECT AIRINFO_NUM, AIRINFO_AIRLINE, AIRINFO_ROUTE, AIRINFO_START, AIRINFO_RETURN, AIRINFO_PRICE, AIRINFO_DATE
+	FROM AIRINFO
+	ORDER BY AIRINFO_START ASC;
+
+
+	항공권 선택 - SELECTONE()
+	SELECT AIRINFO_NUM, AIRINFO_AIRLINE, AIRINFO_ROUTE, AIRINFO_START, AIRINFO_RETURN, AIRINFO_PRICE, AIRINFO_DATE
+	FROM AIRINFO
+	WHERE AIRINFO_NUM = ?;
+
+
+	항공권 잔여좌석, 시간, 가격 변경(관리자) - UPDATE()
+	: 시간 + 가격 변경
+	UPDATE AIRINFO SET AIRINFO_START = ?, AIRINFO_RETURN = ?, AIRINFO_PRICE = ? WHERE AIRINFO_NUM = ?;
+
+	: 시간 변경
+	UPDATE AIRINFO SET AIRINFO_START = ?, AIRINFO_RETURN = ? WHERE AIRINFO_NUM = ?;
+
+	: 가격 변경
+	UPDATE AIRINFO SET AIRINFO_PRICE = ? WHERE AIRINFO_NUM = ?;
+
+	// ????
+	: 좌석 변경
+	
+	항공권 삭제(관리자) - DELETE()
+	DELETE FROM AIRINFO WHERE  AIRINFO_NUM = ?;
+
+
+//***************미완	
+//////// ???
+AIROPT (항공옵션)
+	선택한 항공권 옵션목록 - SELECTALL()	// ????
+	
+
+	- SELECTONE()
+	SELECT AIROPT_NUM, AIROPT_GRADE, AIROPT_PRICE FROM AIROPT WHERE AIROPT_NUM = ?;
+
+	초기데이터 삽입 - INSERT()
+	// 디비에서
+
+//***************미완
+/// AIRDET_NUM을 알아야 되서 조인해야함
+AIRDET (항공상세)
+	선택한 항공권 목록 - SELECTALL()
+	SELECT AIRDET_NUM, AIRINFO_NUM, AIROPT_NUM, AIRDET_CNT FROM AIRDET WHERE AIRDET_NUM = ?;
+
+	- SELECTONE()
+
+	크롤링할 때 같이 삽입 - INSERT()
+	// 디비에서
+
+	잔여 좌석 변경 - UPDATE()
+	UPDATE AIRDET SET AIRDET_CNT = 57 WHERE AIRDET_NUM = ?;
+
+
+	- DELETE()
+
+AIRBOOK (항공예매)
+	// 어떤 회원이 예매한 
+	예매한 항공권 목록 - SELECTALL()
+	SELECT AIRBOOK_NUM, MEMBER_ID, AIRDET_NUM, AIRBOOK_CNT, AIRBOOK_DATE FROM AIRBOOK WHERE MEMBER_ID = ?;
+
+	예매한 항공권 - SELECTONE()
+	SELECT AIRBOOK_NUM, MEMBER_ID, AIRDET_NUM, AIRBOOK_CNT, AIRBOOK_DATE FROM AIRBOOK WHERE AIRBOOK_NUM = ?;
+
+//***************미완
+	항공권 예매 - INSERT()
+	예매처리하고 재고 깍아야 함
+	// 회원 아이디, 항공상세 번호 >>> 이거 어케해;;, 재고, 카드번호
+	INSERT INTO AIRBOOK (MEMBER_ID, AIRDET_NUM, AIRBOOK_CNT, AIRBOOK_CARD) VALUES ('user003', 4, 2, 5478541256480541);
+	
+
+	예약 변경 - UPDATE()
+	
+
+	예약 취소 - DELETE()
+
+
